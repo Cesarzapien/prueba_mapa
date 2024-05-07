@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation(files("C:\\Users\\cesar\\AndroidStudioProjects\\PruebaMapa\\libs\\heresdk.aar"))
-    implementation("com.getbase:floatingactionbutton")
+    implementation(libs.floatingactionbutton)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,21 +7,179 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/floating"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        android:src="@drawable/baseline_location_on_24"/>
-
     <com.here.sdk.mapview.MapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
     </com.here.sdk.mapview.MapView>
 
+    <EditText
+        android:id="@+id/radio_input"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="102dp"
+        android:background="@drawable/custom_input"
+        android:hint="Kilometros"
+        android:inputType="number"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
 
-</RelativeLayout>
+    <ImageButton
+        android:id="@+id/btn_input_radio"
+        android:layout_width="59dp"
+        android:layout_height="29dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_background"
+        android:src="@drawable/radio_image"
+        app:layout_constraintLeft_toRightOf="@+id/radio_input"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/ciudad_input"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="102dp"
+        android:background="@drawable/custom_input"
+        android:hint="Ciudad"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/btn_input_ciudad"
+        android:layout_width="59dp"
+        android:layout_height="29dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button_background"
+        android:src="@drawable/search_icon"
+        app:layout_constraintLeft_toRightOf="@+id/ciudad_input"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/coordendas_iniciales_input"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="102dp"
+        android:background="@drawable/custom_input"
+        android:hint="Coordenada 1"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/coordendas_finales_input"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="102dp"
+        android:background="@drawable/custom_input"
+        android:hint="Coordenada 2"
+        android:inputType="text"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/btn_input_coordenadas"
+        android:layout_width="59dp"
+        android:layout_height="29dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="38dp"
+        android:background="@drawable/rounded_button_background"
+        android:src="@drawable/search_icon"
+        app:layout_constraintLeft_toRightOf="@+id/coordendas_iniciales_input"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+
+
+
+
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="18dp"
+        app:fab_expandDirection="up"
+        app:fab_labelsPosition="left"
+        app:fab_labelStyle="@style/FloatStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_ubicacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorDisabled="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/baseline_location_on_24"
+            app:fab_title="Mostrar Ubicación"/>
+
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_radio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorDisabled="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/radio_image"
+            app:fab_title="Crear Radio"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_busqueda"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorDisabled="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/search_icon"
+            app:fab_title="Busqueda"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_ruta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorDisabled="#FFF"
+            app:fab_size="mini"
+            app:fab_icon="@drawable/baseline_location_on_24"
+            app:fab_title="Crear Ruta"/>
+
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
