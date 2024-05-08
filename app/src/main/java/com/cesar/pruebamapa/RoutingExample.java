@@ -91,6 +91,7 @@ public class RoutingExample {
     }
 
     public void addRoute(GeoCoordinates coordenadas_iniciales,GeoCoordinates coordenadas_destino) {
+        clearRoute();
         startGeoCoordinates = coordenadas_iniciales;
         destinationGeoCoordinates = coordenadas_destino;
         Waypoint startWaypoint = new Waypoint(startGeoCoordinates);

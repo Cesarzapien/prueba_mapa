@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         input_coordenada2.setVisibility(View.GONE);
                         boton_ruta.setVisibility(View.GONE);
                         mapScene.removeMapPolygon(mapCircle);
+                        routingExample.clearMap();
                         flyTo(userCoordinates);
                         getAddressForCoordinates(userCoordinates);
                     }
@@ -158,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 input_coordenada2.setVisibility(View.GONE);
                 boton_ruta.setVisibility(View.GONE);
                 //mapScene.removeMapPolygon(mapCircle);
+                routingExample.clearMap();
                 input_radio.setText("");
                 boton_radio.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -203,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 input_coordenada2.setVisibility(View.GONE);
                 boton_ruta.setVisibility(View.GONE);
                 mapScene.removeMapPolygon(mapCircle);
+                routingExample.clearMap();
                 input_busqueda.setText("");
                 boton_busqueda.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -384,10 +387,6 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
             mapView.getMapScene().removeMapPolyline(mapPolyline);
         }
         mapPolylines.clear();
-    }
-
-    public void addRouteButtonClicked(GeoCoordinates primera_coordenada,GeoCoordinates segunda_coordenada) {
-        routingExample.addRoute(primera_coordenada,segunda_coordenada);
     }
 
 
@@ -685,10 +684,6 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         }
         return (altitude != null) ? new GeoCoordinates(latitude, longitude, altitude) : new GeoCoordinates(latitude, longitude);
     }
-
-
-
-
 
     private double getRandom(double min, double max) {
         return min + Math.random() * (max - min);
