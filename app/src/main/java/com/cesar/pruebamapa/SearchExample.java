@@ -30,12 +30,15 @@ import com.here.sdk.core.Anchor2D;
 import com.here.sdk.core.CustomMetadataValue;
 import com.here.sdk.core.GeoBox;
 import com.here.sdk.core.GeoCoordinates;
+import com.here.sdk.core.GeoCoordinatesUpdate;
 import com.here.sdk.core.LanguageCode;
 import com.here.sdk.core.Metadata;
 import com.here.sdk.core.Point2D;
 import com.here.sdk.core.errors.InstantiationErrorException;
 import com.here.sdk.gestures.GestureState;
 import com.here.sdk.mapview.MapCamera;
+import com.here.sdk.mapview.MapCameraAnimation;
+import com.here.sdk.mapview.MapCameraAnimationFactory;
 import com.here.sdk.mapview.MapImage;
 import com.here.sdk.mapview.MapImageFactory;
 import com.here.sdk.mapview.MapMarker;
@@ -53,6 +56,7 @@ import com.here.sdk.search.SearchOptions;
 import com.here.sdk.search.SuggestCallback;
 import com.here.sdk.search.Suggestion;
 import com.here.sdk.search.TextQuery;
+import com.here.time.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -334,11 +338,7 @@ public class SearchExample {
 
             Log.d(LOG_TAG, "GeocodingResult: " + locationDetails);
             addPoiMapMarker(geoCoordinates); // Agregar un marcador en el mapa
-
-            // Mover la cámara del mapa a la dirección buscada
-            double distanceInMeters = 1000 * 0.5; // Ajusta la distancia según tus preferencias
-            MapMeasure mapMeasureZoom = new MapMeasure(MapMeasure.Kind.DISTANCE, distanceInMeters);
-            camera.lookAt(geoCoordinates, mapMeasureZoom);
+            flyTo(geoCoordinates);
         }
     };
 
@@ -394,5 +394,13 @@ public class SearchExample {
         builder.setTitle(title);
         builder.setMessage(message);
         builder.show();
+    }
+
+    private void flyTo(GeoCoordinates geoCoordinates) {
+        GeoCoordinatesUpdate geoCoordinatesUpdate = new GeoCoordinatesUpdate(geoCoordinates);
+        double bowFactor = 1;
+        MapCameraAnimation animation =
+                MapCameraAnimationFactory.flyTo(geoCoordinatesUpdate, bowFactor, Duration.ofSeconds(3));
+        camera.startAnimation(animation);
     }
 }

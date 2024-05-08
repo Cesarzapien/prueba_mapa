@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 boton_radio.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        floatingActionsMenu.collapse();
                         String textoRad = input_radio.getText().toString();
                         if (!textoRad.isEmpty()) {
                             double radio = Double.parseDouble(textoRad);
@@ -186,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                                         if (mapScene != null) {
                                             loadingAlert.startAlertDialog();
                                             showMapCircle(userCoordinates, (float) radio);
+                                            flyTo(userCoordinates);
                                         } else {
                                             // Manejar el caso en que mapScene sea nulo
                                         }
@@ -223,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 boton_busqueda.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        floatingActionsMenu.collapse();
                         String direccion = input_busqueda.getText().toString();
                         if(!direccion.isEmpty()){
                             // Llamar al método de búsqueda en la clase SearchExample
@@ -266,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 boton_ruta.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        floatingActionsMenu.collapse();
                         clearMap();
                         String direccion1 = input_coordenada1.getText().toString();
                         String direccion2 = input_coordenada2.getText().toString();
@@ -681,6 +685,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         if (coordenada1 != null && coordenada2 != null) {
             // Ambas coordenadas están disponibles, llamar al método addRoute
             routingExample.addRoute(coordenada1, coordenada2);
+            flyTo(coordenada1);
         }
     }
 
