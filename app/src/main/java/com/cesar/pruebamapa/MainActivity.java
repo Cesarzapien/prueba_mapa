@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.here.sdk.core.Color;
 import com.here.sdk.core.GeoCircle;
 import com.here.sdk.core.GeoCoordinates;
@@ -63,6 +64,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements PlatformPositioningProvider.PlatformLocationListener {
 
     private FloatingActionButton ubicacion,radio,busqueda,ruta;
+    private FloatingActionsMenu floatingActionsMenu;
     private static final int REQUEST_INTERNET_PERMISSION = 100;
     private static final int REQUEST_LOCATION_PERMISSION = 101;
     private MapCamera mapCamera;
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         initializeHERESDK();
         setContentView(R.layout.activity_main);
 
+        LoadingAlert loadingAlert = new LoadingAlert(MainActivity.this);
+
         // Creamos la instancia del mapa
         mapView = findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
@@ -108,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         // Initialize positioning provider
         positioningProvider = new PlatformPositioningProvider(this);
 
+        floatingActionsMenu = findViewById(R.id.floating_action_menu);
+
         input_radio = findViewById(R.id.radio_input);
         boton_radio = findViewById(R.id.btn_input_radio);
 
@@ -125,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
             @Override
             public void onClick(View v) {
                 // Obtener las coordenadas actuales del teléfono
+                floatingActionsMenu.collapse();
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (locationManager != null && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                     Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -140,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         boton_ruta.setVisibility(View.GONE);
                         mapScene.removeMapPolygon(mapCircle);
                         routingExample.clearMap();
+                        searchExample.clearMap();
                         flyTo(userCoordinates);
                         getAddressForCoordinates(userCoordinates);
                     }
@@ -151,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         radio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                floatingActionsMenu.collapse();
                 input_radio.setVisibility(View.VISIBLE);
                 boton_radio.setVisibility(View.VISIBLE);
                 input_busqueda.setVisibility(View.GONE);
@@ -159,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 input_coordenada2.setVisibility(View.GONE);
                 boton_ruta.setVisibility(View.GONE);
                 //mapScene.removeMapPolygon(mapCircle);
+                searchExample.clearMap();
                 routingExample.clearMap();
                 input_radio.setText("");
                 boton_radio.setOnClickListener(new View.OnClickListener() {
@@ -174,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                                     if (lastKnownLocation != null) {
                                         GeoCoordinates userCoordinates = new GeoCoordinates(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                                         if (mapScene != null) {
+                                            loadingAlert.startAlertDialog();
                                             showMapCircle(userCoordinates, (float) radio);
                                         } else {
                                             // Manejar el caso en que mapScene sea nulo
@@ -197,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         busqueda.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                floatingActionsMenu.collapse();
                 input_busqueda.setVisibility(View.VISIBLE);
                 boton_busqueda.setVisibility(View.VISIBLE);
                 input_radio.setVisibility(View.GONE);
@@ -206,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 boton_ruta.setVisibility(View.GONE);
                 mapScene.removeMapPolygon(mapCircle);
                 routingExample.clearMap();
+                searchExample.clearMap();
                 input_busqueda.setText("");
                 boton_busqueda.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -213,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         String direccion = input_busqueda.getText().toString();
                         if(!direccion.isEmpty()){
                             // Llamar al método de búsqueda en la clase SearchExample
+                            loadingAlert.startAlertDialog();
                             searchExample.geocodeAddressAtLocation(direccion, mapView.getCamera().getState().targetCoordinates);
                         }else{
                             Toast.makeText(MainActivity.this, "Por favor, ingrese una dirección", Toast.LENGTH_SHORT).show();
@@ -226,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         ruta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                floatingActionsMenu.collapse();
                 // Obtener las coordenadas actuales del teléfono
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 if (locationManager != null && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -241,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         input_busqueda.setVisibility(View.GONE);
                         boton_busqueda.setVisibility(View.GONE);
                         mapScene.removeMapPolygon(mapCircle);
+                        searchExample.clearMap();
                         input_coordenada1.setText("");
                         input_coordenada2.setText("");
                         getAddressForCoordinatess(userCoordinates);
@@ -250,9 +266,11 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 boton_ruta.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        clearMap();
                         String direccion1 = input_coordenada1.getText().toString();
                         String direccion2 = input_coordenada2.getText().toString();
                         if (!direccion1.isEmpty() && !direccion2.isEmpty()) {
+                            loadingAlert.startAlertDialog();
                             getCoordenada1(direccion1, mapView.getCamera().getState().targetCoordinates);
                             getCoordenada2(direccion2, mapView.getCamera().getState().targetCoordinates);
                         } else {

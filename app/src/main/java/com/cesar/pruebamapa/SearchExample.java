@@ -381,7 +381,7 @@ public class SearchExample {
         return new GeoBox(southWestCorner, northEastCorner);
     }
 
-    private void clearMap() {
+    public void clearMap() {
         for (MapMarker mapMarker : mapMarkerList) {
             mapView.getMapScene().removeMapMarker(mapMarker);
         }
