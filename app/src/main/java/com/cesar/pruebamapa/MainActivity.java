@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
     private SearchExample searchExample;
     private MapView mapView;
     private final List<MapMarker> mapMarkerList = new ArrayList<>();
+    private final List<MapPolyline> mapPolylines = new ArrayList<>();
     private PlatformPositioningProvider positioningProvider;
     private LocationIndicator currentLocationIndicator;
     private RoutingExample routingExample;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         input_coordenada1.setVisibility(View.GONE);
                         input_coordenada2.setVisibility(View.GONE);
                         boton_ruta.setVisibility(View.GONE);
+                        mapScene.removeMapPolygon(mapCircle);
                         flyTo(userCoordinates);
                         getAddressForCoordinates(userCoordinates);
                     }
@@ -155,23 +157,29 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 input_coordenada1.setVisibility(View.GONE);
                 input_coordenada2.setVisibility(View.GONE);
                 boton_ruta.setVisibility(View.GONE);
+                //mapScene.removeMapPolygon(mapCircle);
                 input_radio.setText("");
                 boton_radio.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Obtener el valor del radio en kilómetros del EditText
-                        String radioString = input_radio.getText().toString();
-                        if (!radioString.isEmpty()) {
-                            double radio = Double.parseDouble(radioString);
-                            // Obtener las coordenadas actuales del teléfono
-                            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                            if (locationManager != null && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                                if (lastKnownLocation != null) {
-                                    GeoCoordinates userCoordinates = new GeoCoordinates(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                                    // Llamar al método showMapCircle con las coordenadas actuales y el radio
-                                    showMapCircle(userCoordinates, (float) radio * 1000); // Convertir el radio a metros
+                        String textoRad = input_radio.getText().toString();
+                        if (!textoRad.isEmpty()) {
+                            double radio = Double.parseDouble(textoRad);
+                            if (radio <= 5000) {
+                                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                                if (locationManager != null && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                                    if (lastKnownLocation != null) {
+                                        GeoCoordinates userCoordinates = new GeoCoordinates(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                                        if (mapScene != null) {
+                                            showMapCircle(userCoordinates, (float) radio);
+                                        } else {
+                                            // Manejar el caso en que mapScene sea nulo
+                                        }
+                                    }
                                 }
+                            } else {
+                                Toast.makeText(MainActivity.this, "El radio máximo permitido es de 5000 metros.", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             // Manejar el caso en que el EditText esté vacío
@@ -194,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                 input_coordenada1.setVisibility(View.GONE);
                 input_coordenada2.setVisibility(View.GONE);
                 boton_ruta.setVisibility(View.GONE);
+                mapScene.removeMapPolygon(mapCircle);
                 input_busqueda.setText("");
                 boton_busqueda.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -228,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         boton_radio.setVisibility(View.GONE);
                         input_busqueda.setVisibility(View.GONE);
                         boton_busqueda.setVisibility(View.GONE);
+                        mapScene.removeMapPolygon(mapCircle);
                         input_coordenada1.setText("");
                         input_coordenada2.setText("");
                         getAddressForCoordinatess(userCoordinates);
@@ -355,6 +365,25 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
             mapView.getMapScene().removeMapMarker(mapMarker);
         }
         mapMarkerList.clear();
+    }
+
+    public void clearRoute() {
+        clearWaypointMapMarker();
+        clearRuta();
+    }
+
+    private void clearWaypointMapMarker() {
+        for (MapMarker mapMarker : mapMarkerList) {
+            mapView.getMapScene().removeMapMarker(mapMarker);
+        }
+        mapMarkerList.clear();
+    }
+
+    private void clearRuta() {
+        for (MapPolyline mapPolyline : mapPolylines) {
+            mapView.getMapScene().removeMapPolyline(mapPolyline);
+        }
+        mapPolylines.clear();
     }
 
     public void addRouteButtonClicked(GeoCoordinates primera_coordenada,GeoCoordinates segunda_coordenada) {
