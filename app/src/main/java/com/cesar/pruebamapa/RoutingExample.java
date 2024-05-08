@@ -182,11 +182,11 @@ public class RoutingExample {
         long estimatedTrafficDelayInSeconds = route.getTrafficDelay().getSeconds();
         int lengthInMeters = route.getLengthInMeters();
 
-        String routeDetails = "Travel Time: " + formatTime(estimatedTravelTimeInSeconds)
-                + ", traffic delay: " + formatTime(estimatedTrafficDelayInSeconds)
-                + ", Length: " + formatLength(lengthInMeters);
+        String routeDetails = "Tiempo de viaje: " + formatTime(estimatedTravelTimeInSeconds)
+                + ", Tráfico: " + formatTime(estimatedTrafficDelayInSeconds)
+                + ", Distancia: " + formatLength(lengthInMeters);
 
-        showDialog("Route Details", routeDetails);
+        showDialog("Detalles de la ruta", routeDetails);
     }
 
     private String formatTime(long sec) {
