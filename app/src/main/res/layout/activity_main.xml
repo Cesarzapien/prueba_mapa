@@ -23,8 +23,8 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="102dp"
-        android:background="@drawable/custom_input"
         android:hint="Kilometros"
+        android:background="@drawable/custom_input"
         android:inputType="number"
         android:textColor="@color/black"
         android:textSize="14sp"
@@ -125,6 +125,17 @@
         app:layout_constraintLeft_toRightOf="@+id/coordendas_iniciales_input"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <EditText
+        android:id="@+id/coord_input"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="690dp"
+        android:inputType="numberDecimal"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        android:visibility="invisible"
         tools:ignore="MissingConstraints" />
 
 

@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
     private SearchEngine searchEngine;
     private MapScene mapScene;
     private MapPolygon mapCircle;
-    private EditText input_radio,input_busqueda,input_coordenada1,input_coordenada2;
+    private EditText input_radio,input_busqueda,input_coordenada1,input_coordenada2,prueba_coordenada;
     private ImageButton boton_radio,boton_busqueda,boton_ruta;
     private SearchExample searchExample;
     private MapView mapView;
@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
     private LocationIndicator currentLocationIndicator;
     private RoutingExample routingExample;
 
+    private GeoCoordinates coordenada1;
+    private GeoCoordinates coordenada2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
         input_coordenada1 = findViewById(R.id.coordendas_iniciales_input);
         input_coordenada2 = findViewById(R.id.coordendas_finales_input);
         boton_ruta = findViewById(R.id.btn_input_coordenadas);
+
+        prueba_coordenada = findViewById(R.id.coord_input);
 
         ubicacion = findViewById(R.id.btn_ubicacion);
         ubicacion.setOnClickListener(new View.OnClickListener() {
@@ -229,12 +233,21 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
                         getAddressForCoordinatess(userCoordinates);
                     }
                 }
+
                 boton_ruta.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        String direccion1 = input_coordenada1.getText().toString();
+                        String direccion2 = input_coordenada2.getText().toString();
+                        if (!direccion1.isEmpty() && !direccion2.isEmpty()) {
+                            getCoordenada1(direccion1, mapView.getCamera().getState().targetCoordinates);
+                            getCoordenada2(direccion2, mapView.getCamera().getState().targetCoordinates);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Por favor, ingrese ambas direcciones", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
+
             }
         });
 
@@ -554,6 +567,98 @@ public class MainActivity extends AppCompatActivity implements PlatformPositioni
             input_coordenada1.setText(list.get(0).getAddress().addressText);
         }
     };
+
+    public void getCoordenada1(String queryString, GeoCoordinates geoCoordinates) {
+        clearMap();
+
+        AddressQuery query = new AddressQuery(queryString, geoCoordinates);
+        SearchOptions options = new SearchOptions();
+        options.languageCode = LanguageCode.DE_DE;
+        options.maxItems = 1;
+
+        searchEngine.search(query, options, Coordenada1SearchCallback);
+    }
+
+    private final SearchCallback Coordenada1SearchCallback = new SearchCallback() {
+        @Override
+        public void onSearchCompleted(SearchError searchError, List<Place> list) {
+            if (searchError != null) {
+                showDialog("Geocoding", "Error: " + searchError.toString());
+                return;
+            }
+
+            if (list.isEmpty()) {
+                showDialog("Geocoding result", "No se encontraron resultados");
+                return;
+            }
+
+            Place geocodingResult = list.get(0); // Obtener el primer resultado
+            GeoCoordinates geoCoordinates = geocodingResult.getGeoCoordinates();
+            coordenada1 = geoCoordinates; // Guardar las coordenadas obtenidas en la variable global
+            addRouteIfBothCoordinatesAreAvailable(); // Llamar a la función para agregar la ruta si ambas coordenadas están disponibles
+        }
+    };
+
+    public void getCoordenada2(String queryString, GeoCoordinates geoCoordinates) {
+        clearMap();
+
+        AddressQuery query = new AddressQuery(queryString, geoCoordinates);
+        SearchOptions options = new SearchOptions();
+        options.languageCode = LanguageCode.DE_DE;
+        options.maxItems = 1;
+
+        searchEngine.search(query, options, Coordenada2SearchCallback);
+    }
+
+    private final SearchCallback Coordenada2SearchCallback = new SearchCallback() {
+        @Override
+        public void onSearchCompleted(SearchError searchError, List<Place> list) {
+            if (searchError != null) {
+                showDialog("Geocoding", "Error: " + searchError.toString());
+                return;
+            }
+
+            if (list.isEmpty()) {
+                showDialog("Geocoding result", "No se encontraron resultados");
+                return;
+            }
+
+            Place geocodingResult = list.get(0); // Obtener el primer resultado
+            GeoCoordinates geoCoordinates = geocodingResult.getGeoCoordinates();
+            coordenada2 = geoCoordinates; // Guardar las coordenadas obtenidas en la variable global
+            addRouteIfBothCoordinatesAreAvailable(); // Llamar a la función para agregar la ruta si ambas coordenadas están disponibles
+        }
+    };
+
+    private void addRouteIfBothCoordinatesAreAvailable() {
+        // Verificar si ambas coordenadas están disponibles
+        if (coordenada1 != null && coordenada2 != null) {
+            // Ambas coordenadas están disponibles, llamar al método addRoute
+            routingExample.addRoute(coordenada1, coordenada2);
+        }
+    }
+
+    private String coordinatesToString(GeoCoordinates coordinates) {
+        if (coordinates.altitude != null) {
+            return String.format("%.5f, %.5f, %.2f", coordinates.latitude, coordinates.longitude, coordinates.altitude);
+        } else {
+            return String.format("%.5f, %.5f", coordinates.latitude, coordinates.longitude);
+        }
+    }
+
+    public static GeoCoordinates fromString(String coordinatesString) {
+        String[] parts = coordinatesString.split(",");
+        double latitude = Double.parseDouble(parts[0].trim());
+        double longitude = Double.parseDouble(parts[1].trim());
+        Double altitude = null;
+        if (parts.length > 2 && !parts[2].trim().isEmpty()) {
+            altitude = Double.parseDouble(parts[2].trim());
+        }
+        return (altitude != null) ? new GeoCoordinates(latitude, longitude, altitude) : new GeoCoordinates(latitude, longitude);
+    }
+
+
+
 
 
     private double getRandom(double min, double max) {
